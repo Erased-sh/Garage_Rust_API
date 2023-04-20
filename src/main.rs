@@ -3,7 +3,7 @@ extern crate actix_web;
 #[macro_use]
 extern crate diesel;
 
-use RUST_REST_APIv2::cv::CV;
+use RUST_REST_APIv2::cv::{CV, self};
 use RUST_REST_APIv2::schema;
 use RUST_REST_APIv2::models::connections::establish_connection;
 
@@ -46,6 +46,7 @@ async fn main() -> io::Result<()> {
             // EXAMPLE
             // .service(NAME_OF_SERVICE)
             //
+            .service(cv::list)
     })
         .bind("127.0.0.1:8080")?
         .run()
