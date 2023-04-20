@@ -55,6 +55,7 @@ fn create_cv(new_title: &str, new_author: &str, new_body: &str) -> usize {
 fn delete_cv(id: String) -> usize {
     use crate::schema::cvs::dsl::*;
 
+    // TODO Change to DATAPOOL
     let connection = &mut establish_connection();
 
     diesel::delete(cvs.filter(id.eq(id)))

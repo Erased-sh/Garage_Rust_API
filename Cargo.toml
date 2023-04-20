@@ -6,5 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-diesel = { version = "2.0.0", features = ["postgres"] }
+diesel = { version = "2.0.0", features = ["postgres", "r2d2", "chrono", "uuid"] }
+r2d2 = "0.8.8"
+r2d2-diesel = "1.0.0"
 dotenvy = "0.15"
+actix-rt = "2.8.0"
+actix-web = "4.3.1"
+env_logger = "0.10.0"
