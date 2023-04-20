@@ -1,6 +1,7 @@
 use diesel::prelude::*;
 
 use crate::schema::cvs;
+use crate::models::connections::establish_connection;
 
 #[derive(Queryable)]
 pub struct CV {
@@ -32,7 +33,7 @@ pub struct NewCV<'a> {
 }
 
 
-fn create_cv(new_title: &str, new_author: &str, new_body: &str, conn: &mut PgConnection) -> usize {
+fn create_cv(new_title: &str, new_author: &str, new_body: &str) -> usize {
     use crate::schema::cvs::dsl::*;
 
     let inserted_cv = NewCV {
@@ -41,17 +42,22 @@ fn create_cv(new_title: &str, new_author: &str, new_body: &str, conn: &mut PgCon
         body: new_body
     };
 
+    // TODO Change to DATAPOOL
+    let connection = &mut establish_connection();
+
     diesel::insert_into(cvs)
         .values(&inserted_cv)
-        .execute(conn)
+        .execute(connection)
         .unwrap_or_else(|e| panic!("Can't insert new value: {:?}", e))
 }
 
 
-fn delete_cv(id: String, conn: &mut PgConnection) -> usize {
+fn delete_cv(id: String) -> usize {
     use crate::schema::cvs::dsl::*;
 
+    let connection = &mut establish_connection();
+
     diesel::delete(cvs.filter(id.eq(id)))
-        .execute(conn)
+        .execute(connection)
         .unwrap_or_else(|e| panic!("Can't delete current value {:?}", e))
 }
