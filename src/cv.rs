@@ -1,3 +1,4 @@
+use actix_web::web::Json;
 use actix_web::{get, HttpResponse, web};
 use diesel::{prelude::*, Queryable};
 use diesel::result::Error;
@@ -25,7 +26,7 @@ impl Serialize for CV {
         state.serialize_field("id", &self.id)?;
         state.serialize_field("title", &self.title)?;
         state.serialize_field("body", &self.body)?;
-        state.serialize_field("author", &self.author);
+        state.serialize_field("author", &self.author)?;
         state.end()
     }
 }
@@ -38,8 +39,6 @@ impl CV {
             author: new_author
         }
     }
-
-    pub fn to_CV_db(&self) {}
 }
 
 #[derive(Insertable)]
@@ -66,7 +65,6 @@ fn create_cv(new_title: &str, new_author: &str, new_body: &str) -> usize {
     diesel::insert_into(cvs)
         .values(&inserted_cv)
         .execute(connection)
-        .unwrap_or_else(|e| panic!("Can't insert new value: {:?}", e))
 }
 
 
@@ -102,19 +100,23 @@ pub async fn list() -> HttpResponse {
         .await
         .unwrap()
         .unwrap();
-        // .map(|cv| HttpResponse::Ok().json(cv));
-        // .map_err(|_| HttpResponse::InternalServerError());
     HttpResponse::Ok()
         .content_type("Aplication/json")
         .json(res)
+}
 
+// TODO Refactor usize output of function 
+#[post("/cvs")]
+pub async fn create(CV_req: Json<Option<CV>>) -> HttpResponse {
+    let connection = &mut establish_connection();
+    let n: CV = CV_req.into_inner().unwrap();
+    let cv = web::block(move || 
+        create_cv(n.title.as_str(), n.author.as_str(), n.body.as_str())).await;
 
-    // let mut arr_cvs = web::block(move || list_cv(50))
-    //     .await
-    //     .map(|cv| HttpResponse::Ok().json(cv))
-    //     .unwrap();
-
-    // HttpResponse::Ok()
-    //     .content_type("application/json")
-    //     .json(arr_cvs)
+    match tweet {
+        Ok(tweet) => HttpResponse::Created()
+            .content_type(APPLICATION_JSON)
+            .json(tweet),
+        _ => HttpResponse::NoContent().await.unwrap(),
+    }
 }
