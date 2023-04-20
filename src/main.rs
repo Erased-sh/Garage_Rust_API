@@ -1,9 +1,10 @@
+use RUST_REST_APIv2::cv::CV;
+use RUST_REST_APIv2::schema;
 use diesel::RunQueryDsl;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
-use crate::cv::CV;
 
 
 pub fn establish_connection() -> PgConnection {
