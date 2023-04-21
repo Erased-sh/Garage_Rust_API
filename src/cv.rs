@@ -48,16 +48,16 @@ impl<'de> Deserialize<'de> for CV {
                                 impl<'de> Visitor<'de> for FieldVisitor {
                                     type Value = Field;
                                     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                                        formatter.write_str("'ids' or 'titles' or 'bodies' or 'authors'")
+                                        formatter.write_str("'id' or 'title' or 'body' or 'author'")
                                     }
                                     fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
                                         where
                                             E: serde::de::Error, {
                                         match v {
-                                            "ids" => Ok(Field::Ids),
-                                            "titles" => Ok(Field::Titles),
-                                            "bodies" => Ok(Field::Bodies),
-                                            "authors" => Ok(Field::Authors),
+                                            "id" => Ok(Field::Ids),
+                                            "title" => Ok(Field::Titles),
+                                            "body" => Ok(Field::Bodies),
+                                            "author" => Ok(Field::Authors),
                                             _ => Err(serde::de::Error::unknown_field(v, FIELDS)),
                                         }
                                     }
@@ -90,47 +90,47 @@ impl<'de> Deserialize<'de> for CV {
                     fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
                         where
                             A: de::MapAccess<'de>, {
-                        let mut ids = None;
-                        let mut titles = None;
-                        let mut bodies = None;
-                        let mut authors = None;
+                        let mut id = None;
+                        let mut title = None;
+                        let mut body = None;
+                        let mut author = None;
                         while let Some(key) = map.next_key()?  {
                             match key {
                                 Field::Ids => {
-                                    if ids.is_some() {
-                                        return Err(de::Error::duplicate_field("ids"))
+                                    if id.is_some() {
+                                        return Err(de::Error::duplicate_field("id"))
                                     }
-                                    ids = Some(map.next_value()?);
+                                    id = Some(map.next_value()?);
                                 },
                                 Field::Titles => {
-                                    if titles.is_some() {
-                                        return Err(de::Error::duplicate_field("titles"))
+                                    if title.is_some() {
+                                        return Err(de::Error::duplicate_field("title"))
                                     }
-                                    titles = Some(map.next_value()?);
+                                    title = Some(map.next_value()?);
                                 },
                                 Field::Bodies => {
-                                    if bodies.is_some() {
-                                        return Err(de::Error::duplicate_field("bodies"))
+                                    if body.is_some() {
+                                        return Err(de::Error::duplicate_field("body"))
                                     }
-                                    bodies = Some(map.next_value()?);
+                                    body = Some(map.next_value()?);
                                 },
                                 Field::Authors => {
-                                    if authors.is_some() { 
-                                        return Err(de::Error::duplicate_field("authors"))
+                                    if author.is_some() { 
+                                        return Err(de::Error::duplicate_field("author"))
                                     }
-                                    authors = Some(map.next_value()?);
+                                    author = Some(map.next_value()?);
                                 }
                             }
                         }
-                        let ids = ids.ok_or_else(|| de::Error::missing_field("ids"))?;
-                        let titles = titles.ok_or_else(|| de::Error::missing_field("titles"))?;
-                        let bodies = bodies.ok_or_else(|| de::Error::missing_field("bodies"))?;
-                        let authors = authors.ok_or_else(|| de::Error::missing_field("authors"))?;
-                        Ok(CV::new(ids, titles, bodies, authors))
+                        let id = id.ok_or_else(|| de::Error::missing_field("id"))?;
+                        let title = title.ok_or_else(|| de::Error::missing_field("title"))?;
+                        let body = body.ok_or_else(|| de::Error::missing_field("body"))?;
+                        let author = author.ok_or_else(|| de::Error::missing_field("author"))?;
+                        Ok(CV::new(id, title, body, author))
                     }
         
                 }
-                const FIELDS: &'static [&'static str] = &["ids", "titles", "bodies", "authors"];
+                const FIELDS: &'static [&'static str] = &["id", "title", "body", "author"];
                 deserializer.deserialize_struct("CV", FIELDS, FieldVisitor)
             }
 }
