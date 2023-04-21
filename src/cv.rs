@@ -215,16 +215,21 @@ pub async fn list() -> HttpResponse {
 
 // TODO Refactor usize output of function 
 // TODO ADD Deserializer 
-#[post("/cvs")]
+#[post("/new_cvs")]
 pub async fn create(CV_req: Json<Option<CV>>) -> HttpResponse {
     let n: CV = CV_req.into_inner().unwrap();
     let cv = web::block(move || 
         create_cv(n.title.as_str(), n.author.as_str(), n.body.as_str())).await;
 
     match cv {
-        Ok(c) => HttpResponse::Created()
+        Ok(c) => 
+        {   println!("{:?}", cv);
+            HttpResponse::Created()
             .content_type("Application/json")
-            .json(c),
-        _ => HttpResponse::NoContent().await.unwrap(),
+            .json(c)
+        },
+        _ => {
+            HttpResponse::NoContent().await.unwrap()
+        },
     }
 }
