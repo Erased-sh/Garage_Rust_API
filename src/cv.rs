@@ -1,14 +1,13 @@
 use core::panic;
 
-use actix_web::web::Json;
-use actix_web::{get, HttpResponse, web, post};
+use actix_web::web::{Json, Path};
+use actix_web::{get, HttpResponse, web, post, delete};
 use diesel::{prelude::*, Queryable};
 use diesel::result::Error;
 use serde::de::{Visitor, SeqAccess};
 use serde::ser::SerializeStruct;
 use serde::{Deserialize, Serialize};
-use crate::models::Response;
-use crate::schema::cvs::{self, author};
+use crate::schema::cvs::{self};
 use crate::models::connections::establish_connection;
 use serde::de;
 
@@ -213,8 +212,7 @@ pub async fn list() -> HttpResponse {
         .json(res)
 }
 
-// TODO Refactor usize output of function 
-// TODO ADD Deserializer 
+
 #[post("/new_cvs")]
 pub async fn create(CV_req: Json<Option<CV>>) -> HttpResponse {
     let n: CV = CV_req.into_inner().unwrap();
@@ -223,7 +221,7 @@ pub async fn create(CV_req: Json<Option<CV>>) -> HttpResponse {
 
     match cv {
         Ok(c) => 
-        {   println!("{:?}", cv);
+        {
             HttpResponse::Created()
             .content_type("Application/json")
             .json(c)
@@ -232,4 +230,15 @@ pub async fn create(CV_req: Json<Option<CV>>) -> HttpResponse {
             HttpResponse::NoContent().await.unwrap()
         },
     }
+}
+
+#[delete("/cv/{id}")]
+pub async fn delete(path: Path<(String,)>) -> HttpResponse {
+    let _ = web::block(move || delete_cv(path.0.as_str().parse().unwrap())).await;
+
+    HttpResponse::NoContent()
+        .content_type("Application/json")
+        .await
+        .unwrap()
+
 }

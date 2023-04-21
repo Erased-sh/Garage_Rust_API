@@ -48,6 +48,7 @@ async fn main() -> io::Result<()> {
             //
             .service(cv::list)
             .service(cv::create)
+            .service(cv::delete)
     })
         .bind("127.0.0.1:8080")?
         .run()
