@@ -3,9 +3,9 @@ extern crate actix_web;
 #[macro_use]
 extern crate diesel;
 
-use RUST_REST_APIv2::cv::{CV, self};
-use RUST_REST_APIv2::schema;
-use RUST_REST_APIv2::models::connections::establish_connection;
+use RUST_REST_APIv2::cv;
+
+
 
 
 use std::{env, io};
