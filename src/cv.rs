@@ -1,5 +1,4 @@
 use core::panic;
-
 use actix_web::web::{Json, Path};
 use actix_web::{get, HttpResponse, web, post, delete};
 use diesel::{prelude::*, Queryable};
@@ -7,7 +6,7 @@ use diesel::result::Error;
 use serde::de::{Visitor, SeqAccess};
 use serde::ser::SerializeStruct;
 use serde::{Deserialize, Serialize};
-use crate::schema::cvs::{self};
+use crate::schema::cvs;
 use crate::models::connections::establish_connection;
 use serde::de;
 
@@ -175,13 +174,13 @@ fn create_cv(new_title: &str, new_author: &str, new_body: &str) -> usize {
 }
 
 
-fn delete_cv(id: String) -> usize {
+fn delete_cv(current_id: i32) -> usize {
     use crate::schema::cvs::dsl::*;
 
     // TODO Change to DATA<POOL>
     let connection = &mut establish_connection();
 
-    diesel::delete(cvs.filter(id.eq(id)))
+    diesel::delete(cvs.filter(id.eq(current_id)))
         .execute(connection)
         .unwrap_or_else(|e| panic!("Can't delete current value {:?}", e))
 }
